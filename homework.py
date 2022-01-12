@@ -28,7 +28,7 @@ class RequestExceptionError(Exception):
 
 
 class NoDocumentedStatusError(Exception):
-    """Недокументированный статус"""
+    """Недокументированный статус."""
 
 
 RETRY_TIME = 600
@@ -123,7 +123,7 @@ def get_api_answer(current_timestamp):
 
 
 def check_response(response):
-    """Проверка ответа API"""
+    """Проверка ответа API."""
     homeworks = response['homeworks']
     if homeworks is None:
         check_message = (
@@ -148,7 +148,7 @@ def parse_status(homework):
         parse_message = 'Пустое значение "status".'
         raise NoDocumentedStatusError(parse_message)
     if homework_name is None:
-        text_error = 'Пустое значение "homework_name".'
+        parse_message = 'Пустое значение "homework_name".'
         raise NoDocumentedStatusError(parse_message)
     verdict = HOMEWORK_STATUSES[homework_status]
     return f'Изменился статус проверки работы "{homework_name}". {verdict}'
