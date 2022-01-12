@@ -5,7 +5,6 @@ import time
 import requests
 import telegram
 from dotenv import load_dotenv
-from telegram import Bot
 
 
 load_dotenv()
@@ -31,10 +30,10 @@ class RequestExceptionError(Exception):
 class NoDocumentedStatusError(Exception):
     """Недокументированный статус"""
 
+
 RETRY_TIME = 600
 ENDPOINT = 'https://practicum.yandex.ru/api/user_api/homework_statuses/'
 HEADERS = {'Authorization': f'OAuth {PRACTICUM_TOKEN}'}
-
 
 
 HOMEWORK_STATUSES = {
@@ -42,6 +41,7 @@ HOMEWORK_STATUSES = {
     'reviewing': 'Работа взята на проверку ревьюером.',
     'rejected': 'Работа проверена: у ревьюера есть замечания.'
 }
+
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -54,10 +54,12 @@ logger.addHandler(
     logging.StreamHandler()
 )
 
+
 def main():
     """Основная логика работы бота."""
     if not check_tokens():
-        logging.critical("Переменные окружения заданы некорректно или отсутсвуют")
+        logging.critical("Переменные окружения заданы 
+                         некорректно или отсутсвуют")
         exit()
     bot = telegram.Bot(token=TELEGRAM_TOKEN)
     current_timestamp = int(time.time())
@@ -102,6 +104,7 @@ def check_tokens():
             f'{token_message} TELEGRAM_CHAT_ID')
     return tokens_bool
 
+
 def get_api_answer(current_timestamp):
     """Запрос к эндпоинту API-сервиса."""
     timestamp = current_timestamp or int(time.time())
@@ -117,6 +120,7 @@ def get_api_answer(current_timestamp):
         request_error_message = f'Ошибка запроса({error}) страницы {ENDPOINT}'
         logger.error(request_error_message)
         raise RequestExceptionError(request_error_message)
+
 
 def check_response(response):
     """Проверка ответа API"""
@@ -159,7 +163,6 @@ def send_message(bot, message):
     except telegram.TelegramError as telegram_error:
         logger.error(
             f'Сообщение в Telegram не отправлено: {telegram_error}')
-
 
 
 if __name__ == '__main__':
