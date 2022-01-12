@@ -58,8 +58,8 @@ logger.addHandler(
 def main():
     """Основная логика работы бота."""
     if not check_tokens():
-        logging.critical("Переменные окружения заданы
-                         некорректно или отсутсвуют")
+        logging.critical('Переменные окружения заданы'
+                         'некорректно или отсутсвуют')
         exit()
     bot = telegram.Bot(token=TELEGRAM_TOKEN)
     current_timestamp = int(time.time())
@@ -112,8 +112,7 @@ def get_api_answer(current_timestamp):
     try:
         response = requests.get(ENDPOINT, headers=HEADERS, params=params)
         if response.status_code != 200:
-            code_message = f'{ENDPOINT} недоступен.
-                            Код ответа {response.status_code}'
+            code_message = f'{ENDPOINT} недоступен.'
             logger.error(code_message)
             raise TheAnswerIsNot200Error(code_message)
         return response.json()
@@ -131,7 +130,7 @@ def check_response(response):
             'Ошибка ключа "homeworks" или response'
             'имеет неправильное значение.')
         logger.error(check_message)
-        raise  EmptyDictionaryOrListError(check_message)
+        raise EmptyDictionaryOrListError(check_message)
     if homeworks == []:
         return {}
     if not isinstance(homeworks, list):
