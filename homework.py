@@ -1,11 +1,10 @@
-import json
 import logging
 import os
 import time
 
 import requests
 import telegram
-from dotenv import load_dotenv 
+from dotenv import load_dotenv
 from telegram import Bot
 
 
@@ -15,6 +14,7 @@ load_dotenv()
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
 TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
 PRACTICUM_TOKEN = os.getenv('PRACTICUM_TOKEN')
+
 
 class TheAnswerIsNot200Error(Exception):
     """Ответ сервера не равен 200."""
@@ -27,13 +27,9 @@ class EmptyDictionaryOrListError(Exception):
 class RequestExceptionError(Exception):
     """Ошибка запроса."""
 
+
 class NoDocumentedStatusError(Exception):
-    """Недокументированный статус"""    
-
-
-
-
-
+    """Недокументированный статус"""
 
 RETRY_TIME = 600
 ENDPOINT = 'https://practicum.yandex.ru/api/user_api/homework_statuses/'
