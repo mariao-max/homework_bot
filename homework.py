@@ -58,7 +58,7 @@ logger.addHandler(
 def main():
     """Основная логика работы бота."""
     if not check_tokens():
-        logging.critical("Переменные окружения заданы 
+        logging.critical("Переменные окружения заданы
                          некорректно или отсутсвуют")
         exit()
     bot = telegram.Bot(token=TELEGRAM_TOKEN)
@@ -88,7 +88,7 @@ def main():
 def check_tokens():
     """Проверка наличия токенов."""
     token_message = (
-     'Отсутствует обязательная переменная окружения: ')
+        'Отсутствует обязательная переменная окружения: ')
     tokens_bool = True
     if PRACTICUM_TOKEN is None:
         tokens_bool = False
@@ -110,9 +110,10 @@ def get_api_answer(current_timestamp):
     timestamp = current_timestamp or int(time.time())
     params = {'from_date': timestamp}
     try:
-        response = requests.get(ENDPOINT, headers = HEADERS, params=params)
+        response = requests.get(ENDPOINT, headers=HEADERS, params=params)
         if response.status_code != 200:
-            code_message = f'{ENDPOINT} недоступен. Код ответа {response.status_code}'
+            code_message = f'{ENDPOINT} недоступен.
+                            Код ответа {response.status_code}'
             logger.error(code_message)
             raise TheAnswerIsNot200Error(code_message)
         return response.json()
@@ -127,8 +128,8 @@ def check_response(response):
     homeworks = response['homeworks']
     if homeworks is None:
         check_message = (
-        'Ошибка ключа "homeworks" или response'
-        'имеет неправильное значение.')
+            'Ошибка ключа "homeworks" или response'
+            'имеет неправильное значение.')
         logger.error(check_message)
         raise  EmptyDictionaryOrListError(check_message)
     if homeworks == []:
@@ -137,7 +138,7 @@ def check_response(response):
         api_message = 'API ответ не является списком'
         logger.error(api_message)
         raise EmptyDictionaryOrListError(api_message)
-    return homeworks     
+    return homeworks
 
 
 def parse_status(homework):
@@ -167,4 +168,3 @@ def send_message(bot, message):
 
 if __name__ == '__main__':
     main()
-
