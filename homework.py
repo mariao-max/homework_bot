@@ -46,8 +46,6 @@ LAST_MESSAGE = ''
 
 def main():
     """Основная логика работы бота."""
-
-    bot = telegram.Bot(token=TELEGRAM_TOKEN)
     current_timestamp = int(time.time())
 
     while check_tokens():
