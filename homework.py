@@ -41,42 +41,48 @@ logger.addHandler(
     logging.StreamHandler()
 )
 
-LAST_MESSAGE = ''
-
 
 def main():
     """Основная логика работы бота."""
+    if not check_tokens():
+        exit()
     bot = telegram.Bot(token=TELEGRAM_TOKEN)
     current_timestamp = int(time.time())
-    while check_tokens():
+    error_message = None
+    LAST_MESSAGE = set()
+    while True:
         try:
             response = get_api_answer(current_timestamp)
             homework = check_response(response)
             if homework:
                 message = parse_status(homework[0])
-                if message != LAST_MESSAGE:
+                LAST_MESSAGE.append(message)
+                if message not in LAST_MESSAGE:
                     send_message(bot, message)
                     logger.info('Сообщение отправлено')
-            else:
-                logger.info('Изменений нет, повторная проверка'
-                            'будет через 10 минут')
+                else:
+                    logger.debug('Изменений нет, повторная проверка'
+                                 'будет через 10 минут')
+                current_timestamp = response['current_date']
                 time.sleep(RETRY_TIME)
-            current_timestamp = response['current_date']
-            time.sleep(RETRY_TIME)
         except Exception as error:
-            message = f'Сбой в программе: {error}'
+            message = f'Сбой в работе программы: {error}'
             logger.error(message)
-            send_message(bot, message)
-    else:
-        logger.critical('Переменные окружения заданы'
-                        'некорректно или отсутсвуют')
+            if error_message != message:
+                error_message = message
+                send_message(bot, error_message)
+        time.sleep(RETRY_TIME)
 
 
 def check_tokens():
     """Проверка наличия токенов."""
+    token_msg = (
+        'Переменные окружения заданы'
+        'некорректно или отсутсвует:')
     tokens = [TELEGRAM_CHAT_ID, PRACTICUM_TOKEN, TELEGRAM_TOKEN]
     for token in tokens:
         if token is None:
+            logger.critical(f'{token_msg} {token}')
             return False
         return True
 
@@ -93,14 +99,14 @@ def get_api_answer(current_timestamp):
             raise TheAnswerIsNot200Error(code_message)
         response = response.json()
         return response
-    except JSONDecodeError as value_error:
-        code_msg = f'Код ответа API: {value_error}'
+    except requests.exceptions.RequestException as request_error:
+        code_msg = f'Код ответа (RequestException): {request_error}'
         logger.error(code_msg)
-        raise JSONDecodeError(code_msg)
-    except RequestExceptionError as error:
-        request_error_message = f'Ошибка запроса({error}) страницы {ENDPOINT}'
-        logger.error(request_error_message)
-        raise RequestExceptionError(request_error_message)
+        raise RequestExceptionError(code_msg)
+    except JSONDecodeError as value_error:
+        json_msg = f'Код ответа: {value_error}'
+        logger.error(json_msg)
+        raise JSONDecodeError(json_msg)
 
 
 def check_response(response):
