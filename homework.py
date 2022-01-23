@@ -1,11 +1,12 @@
 import logging
 import os
 import time
-
+import sys
 import requests
 import telegram
 from dotenv import load_dotenv
 from json.decoder import JSONDecodeError
+
 
 from exceptions import (NoDocumentedStatusError, EmptyDictionaryOrListError,
                         RequestExceptionError, TheAnswerIsNot200Error,
@@ -45,19 +46,19 @@ logger.addHandler(
 def main():
     """Основная логика работы бота."""
     if not check_tokens():
-        exit()
+        sys.exit(1)
     bot = telegram.Bot(token=TELEGRAM_TOKEN)
     current_timestamp = int(time.time())
     error_message = None
-    LAST_MESSAGE = set()
+    last_message = set()
     while True:
         try:
             response = get_api_answer(current_timestamp)
-            homework = check_response(response)
-            if homework:
-                message = parse_status(homework[0])
-                LAST_MESSAGE.append(message)
-                if message not in LAST_MESSAGE:
+            homeworks = check_response(response)
+            if homeworks:
+                message = parse_status(homeworks[0])
+                last_message.append(message)
+                if message not in last_message:
                     send_message(bot, message)
                     logger.info('Сообщение отправлено')
                 else:
@@ -79,13 +80,16 @@ def check_tokens():
     token_msg = (
         'Переменные окружения заданы'
         'некорректно или отсутсвует:')
-    tokens = [TELEGRAM_CHAT_ID, PRACTICUM_TOKEN, TELEGRAM_TOKEN]
+    tokens = {
+        PRACTICUM_TOKEN: 'PRACTICUM_TOKEN',
+        TELEGRAM_TOKEN: 'TELEGRAM_TOKEN',
+        TELEGRAM_CHAT_ID: 'TELEGRAM_CHAT_ID'
+    }
     for token in tokens:
-        if token is None:
-            logger.critical(f'{token_msg} {token}')
+        if None in tokens:
+            logger.critical(f'{token_msg} {tokens[token]}')
             return False
-        return True
-
+    return True
 
 def get_api_answer(current_timestamp):
     """Запрос к эндпоинту API-сервиса."""
