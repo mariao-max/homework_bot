@@ -81,15 +81,16 @@ def check_tokens():
         'Переменные окружения заданы'
         'некорректно или отсутсвует:')
     tokens = {
-        PRACTICUM_TOKEN: 'PRACTICUM_TOKEN',
-        TELEGRAM_TOKEN: 'TELEGRAM_TOKEN',
-        TELEGRAM_CHAT_ID: 'TELEGRAM_CHAT_ID'
+        'PRACTICUM_TOKEN': PRACTICUM_TOKEN,
+        'TELEGRAM_TOKEN': TELEGRAM_TOKEN,
+        'TELEGRAM_CHAT_ID': TELEGRAM_CHAT_ID
     }
     for token in tokens:
-        if None in tokens:
-            logger.critical(f'{token_msg} {tokens[token]}')
+        if tokens[token] is None:
+            logger.critical(f'{token_msg} {token}')
             return False
     return True
+
 
 def get_api_answer(current_timestamp):
     """Запрос к эндпоинту API-сервиса."""
