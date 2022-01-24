@@ -57,13 +57,13 @@ def main():
             homeworks = check_response(response)
             if homeworks:
                 message = parse_status(homeworks[0])
-                last_message.add(message)
                 if message not in last_message:
                     send_message(bot, message)
                     logger.info('Сообщение отправлено')
                 else:
                     logger.debug('Изменений нет, повторная проверка'
                                  'будет через 10 минут')
+                    last_message.add(message)
                 current_timestamp = response['current_date']
                 time.sleep(RETRY_TIME)
         except Exception as error:
