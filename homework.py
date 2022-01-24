@@ -57,7 +57,7 @@ def main():
             homeworks = check_response(response)
             if homeworks:
                 message = parse_status(homeworks[0])
-                last_message.append(message)
+                last_message.add(message)
                 if message not in last_message:
                     send_message(bot, message)
                     logger.info('Сообщение отправлено')
